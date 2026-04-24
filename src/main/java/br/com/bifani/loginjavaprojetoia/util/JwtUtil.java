@@ -9,13 +9,12 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    @Value("${JWT_SECRET}")
-    private final String jwtSecret;
 
-    @Value("${EXPIRATION_TIME}")
+    private final String jwtSecret;
     private final Long expirationTime;
 
-    public JwtUtil(String jwtSecret, Long expirationTime) {
+    public JwtUtil(@Value("${JWT_SECRET}") String jwtSecret,
+                   @Value("${EXPIRATION_TIME}") Long expirationTime) {
         this.jwtSecret = jwtSecret;
         this.expirationTime = expirationTime;
     }
