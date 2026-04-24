@@ -25,4 +25,9 @@ public class History {
     private User user;
 
     private LocalDateTime timestamp;
+
+    @PrePersist
+    public void prePersist() {
+        timestamp = LocalDateTime.now();
+    }
 }
