@@ -7,6 +7,7 @@ import br.com.bifani.loginjavaprojetoia.model.dtos.UserRegisterRequest;
 import br.com.bifani.loginjavaprojetoia.model.enums.Role;
 import br.com.bifani.loginjavaprojetoia.repositories.IUserRepository;
 import br.com.bifani.loginjavaprojetoia.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
