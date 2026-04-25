@@ -1,6 +1,7 @@
 package br.com.bifani.loginjavaprojetoia.controllers;
 
 import br.com.bifani.loginjavaprojetoia.model.User;
+import br.com.bifani.loginjavaprojetoia.model.dtos.AuthResponse;
 import br.com.bifani.loginjavaprojetoia.model.dtos.UserLoginRequest;
 import br.com.bifani.loginjavaprojetoia.model.dtos.UserRegisterRequest;
 import br.com.bifani.loginjavaprojetoia.model.enums.Role;
@@ -12,13 +13,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody UserRegisterRequest request) {
         User user = new User();
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setEmail(request.email());
@@ -43,20 +42,20 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Usuário criado com sucesso: " + user.getEmail());
+                .body(new AuthResponse(null, "Usuário criado com sucesso: " + user.getEmail()));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody UserLoginRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.email(), request.password())
             );
             String token = jwtUtil.generateToken(request.email());
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(new AuthResponse(token, "Login realizado com sucesso"));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Credenciais inválidas!");
+                    .body(new AuthResponse(null, "Credenciais inválidas!"));
         }
     }
 }
